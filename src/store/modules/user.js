@@ -1,12 +1,12 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, getInfo } from '@/api/user'
+import { getToken, setToken, removeToken, setName, getName, removeName } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
-  name: '',
+  name: getName(),
   avatar: '',
-  roles: []
+  roles: ''
 }
 
 const mutations = {
@@ -30,11 +30,14 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        console.log(response)
+        commit('SET_TOKEN', response.token)
+        setToken(response.token)
+        commit('SET_NAME', response.name)
+        setName(response.name)
         resolve()
       }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
@@ -50,16 +53,9 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, name, avatar } = data
+        const { role } = data
 
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_ROLES', role)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -70,15 +66,13 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      commit('SET_TOKEN', '')
+      commit('SET_NAME', '')
+      commit('SET_ROLES', '')
+      removeToken()
+      removeName()
+      resetRouter()
+      resolve()
     })
   },
 

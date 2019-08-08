@@ -53,17 +53,17 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+// import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      // if (!validUsername(value)) {
+      //   callback(new Error('Please enter the correct user name'))
+      // } else {
+      callback()
+      // }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -74,8 +74,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'tengjinting',
+        password: '96e79218965eb72c92a549dd5a330112'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
