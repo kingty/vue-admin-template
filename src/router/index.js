@@ -56,22 +56,22 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/mergerequest',
     component: Layout,
-    redirect: '/example/table',
+    redirect: '/mergerequest',
     name: 'MR',
     meta: { title: 'Mr', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: '/mrtomerge',
+        name: 'Mr To Merge',
+        component: () => import('@/views/mergerequest/mrtomerge'),
+        meta: { title: 'Mr To Merge', icon: 'table' }
       },
       {
         path: 'table2',
         name: 'Table2',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/mergerequest/mrtomerge'),
         meta: { title: 'Table', icon: 'user' }
       },
       {
