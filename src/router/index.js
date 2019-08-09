@@ -63,22 +63,40 @@ export const constantRoutes = [
     meta: { title: 'Mr', icon: 'example' },
     children: [
       {
-        path: '/mrtomerge',
-        name: 'Mr To Merge',
-        component: () => import('@/views/mergerequest/mrtomerge'),
-        meta: { title: 'Mr To Merge', icon: 'table' }
+        path: '/codereview',
+        name: 'Code Review',
+        component: () => import('@/views/mergerequest/codereview'),
+        meta: { title: 'Code Review', icon: 'table' }
       },
       {
-        path: 'table2',
-        name: 'Table2',
-        component: () => import('@/views/mergerequest/mrtomerge'),
-        meta: { title: 'Table', icon: 'user' }
+        path: '/mymr',
+        name: 'My MR',
+        component: () => import('@/views/mergerequest/mymr'),
+        meta: { title: 'My MR', icon: 'user' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: '/mytest',
+        name: 'My Test',
+        component: () => import('@/views/mergerequest/mytest'),
+        meta: { title: 'My Test', icon: 'user' }
+      },
+      {
+        path: '/testmanage',
+        name: 'Test Manage',
+        component: () => import('@/views/mergerequest/testmanage'),
+        meta: { title: 'Test Manage', icon: 'user' }
+      },
+      {
+        path: '/reviewmanage',
+        name: 'Review Manage',
+        component: () => import('@/views/mergerequest/reviewmanage'),
+        meta: { title: 'Review Manage', icon: 'user' }
+      },
+      {
+        path: '/allmrs',
+        name: 'AllMrs',
+        component: () => import('@/views/mergerequest/allmrs'),
+        meta: { title: 'All Mr', icon: 'user' }
       }
     ]
   },

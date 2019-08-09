@@ -4,14 +4,26 @@
       <el-col :span="6">
         <div class="grid-content bg-purple"></div>
       </el-col>
-      <el-col :span="9">
+      <el-col :span="6">
         <div class="grid-content bg-purple"></div>
       </el-col>
       <el-col :span="3" justify="end">
         <div class="grid-content bg-purple">
-          <el-select v-model="select" clearable placeholder="pick type">
+          <el-select v-model="type" clearable placeholder="type">
             <el-option
-              v-for="item in options"
+              v-for="item in types"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </div>
+      </el-col>
+      <el-col :span="3" justify="end">
+        <div class="grid-content bg-purple">
+          <el-select v-model="state" clearable placeholder="progress">
+            <el-option
+              v-for="item in status"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -33,7 +45,8 @@
         || data.title.toLowerCase().includes(search.toLowerCase()) 
         || data.iid.toString().includes(search.toLowerCase())
         || data.author.username.toLowerCase().includes(search.toLowerCase()))
-        && (!select || data.project_id===select)
+        && (!type || data.project_id===type)
+        && (!state || data.local_state===state)
         )"
         element-loading-text="Loading"
         border
@@ -45,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -54,10 +67,19 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="MRID" width="95">
-          <template slot-scope="scope">{{ scope.row.iid }}</template>
+        <el-table-column  label="MRID" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.iid }}
+            <el-tag
+              v-if="scope.row.urgent === 1"
+              key="First"
+              type="danger"
+              size="small"
+              effect="dark"
+            >First</el-tag>
+          </template>
         </el-table-column>
-        <el-table-column label="Author" width="150" align="center">
+        <el-table-column label="Author" width="120" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.author.username }}</span>
           </template>
@@ -73,10 +95,10 @@
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="created_at" label="UpdateTime" width="200">
+        <el-table-column  label="" width="120" align="center">
           <template slot-scope="scope">
-            <i class="el-icon-time" />
-            <span>{{ scope.row.updated_at | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+            <el-button size="small" v-if="scope.row.local_state === 0" type="primary">request review</el-button>
+            
           </template>
         </el-table-column>
       </el-table>
@@ -87,15 +109,23 @@
 <script>
 import { getAllMr } from "@/api/mergerequest";
 import { parseTime, statusFilter } from "@/utils";
+import { mapGetters } from 'vuex'
 
 export default {
+  computed: {
+    ...mapGetters([
+      'name',
+      'roles'
+    ])
+  },
   data() {
     return {
       search: "",
-      select: "",
+      type: "",
+      state: "",
       list: null,
       listLoading: true,
-      options: [
+      types: [
         {
           value: 379,
           label: "plugin"
@@ -103,6 +133,36 @@ export default {
         {
           value: 284,
           label: "normal"
+        }
+      ],
+      status: [
+        {
+          value: 0,
+          label: "Default"
+        },
+        {
+          value: 1,
+          label: "RequestTest"
+        },
+        {
+          value: 2,
+          label: "Testing"
+        },
+        {
+          value: 3,
+          label: "RequestReview"
+        },
+        {
+          value: 4,
+          label: "Reviewing"
+        },
+        {
+          value: 5,
+          label: "ReviewApproval"
+        },
+        {
+          value: 6,
+          label: "Merged"
         }
       ]
     };
@@ -114,13 +174,11 @@ export default {
     fetchData() {
       this.listLoading = true;
       getAllMr().then(response => {
-        // this.list = response.mrs.filter(item => {
-        //   return (
-        //     item.merge_reviewer.includes(name) &&
-        //     (5 === item.local_state || 6 === item.local_state)
-        //   )
-        // });
-        this.list = response.mrs;
+        this.list = response.mrs.filter(item => {
+          return (
+            item.author.username.includes(this.name)
+          )
+        });
         this.listLoading = false;
       });
     }

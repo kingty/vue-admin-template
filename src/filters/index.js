@@ -26,7 +26,6 @@ export function statusFilter (mr) {
 
 
   const value = statusMap[state]
-  console.log(value)
   statusMap[state] = styleStatus(value)
   return statusMap
 }
