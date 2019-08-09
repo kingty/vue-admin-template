@@ -1,14 +1,25 @@
 // import parseTime, formatTime and set to filter
 export { parseTime, formatTime } from '@/utils'
 
+
+
+
+//Default        MState = 0
+	// RequestTest    MState = 1
+	// Testing        MState = 2
+	// RequestReview  MState = 3
+	// Reviewing      MState = 4
+	// ReviewApproval MState = 5
+	// Merged         MState = 6
 export function statusFilter (mr) {
   var statusMap = {
-    0: 'defalut',
-    1: 'R-test',
-    2: 'test',
-    3: 'R-review',
-    4: 'review',
-    5: 'R-approval'
+    0: '',
+    1: '',
+    2:  mr.tester,
+    3: '',
+    4: mr.reviewer,
+    5: mr.merge_reviewer,
+    6: ''
   }
 
   const state = mr.local_state
