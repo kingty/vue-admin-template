@@ -58,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">

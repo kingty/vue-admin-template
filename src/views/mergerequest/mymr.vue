@@ -58,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -77,6 +77,13 @@
               size="small"
               effect="dark"
             >First</el-tag>
+            <el-tag
+              v-if="scope.row.tester !== '' && scope.row.local_state === 0"
+              key="Reject"
+              type="danger"
+              size="small"
+              effect="dark"
+            >Reject</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Author" width="120" align="center">
@@ -95,7 +102,7 @@
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
           </template>
         </el-table-column>
-        <el-table-column  label="" width="120" align="center">
+        <el-table-column  label="" width="150" align="center">
           <template slot-scope="scope">
             <el-button size="small" v-if="scope.row.local_state === 0" type="primary">request review</el-button>
             

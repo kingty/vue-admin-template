@@ -58,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -101,21 +101,21 @@
               size="small"
               v-if="scope.row.local_state === 4"
               type="primary"
-              @click="approvadialoglVisible = true ;mrid=scope.row.iid"
+              @click="approvadialoglVisible = true ;selectRow=scope.row"
             >approval</el-button>
             <el-button
               size="small"
-              v-if="scope.row.local_state === 5"
+              v-if="scope.row.local_state === 5 &&  scope.row.project_id === 379"
               type="primary"
-              @click="onlinedialogVisible = true ;mrid=scope.row.iid"
-            >merge</el-button>
+              @click="onlinedialogVisible = true ;selectRow=scope.row"
+            >online</el-button>
             <el-tag
               v-if="scope.row.local_state === 6"
-              key="merged"
+              key="online"
               type="info"
               size="small"
               effect="dark"
-            >merged</el-tag>
+            >online</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -127,10 +127,10 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span>Approval first review for mr {{mrid}} ?</span>
+      <span>Approval first review for mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="approvadialoglVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="approvadialoglVisible = false">Yes</el-button>
+        <el-button type="primary" @click="approvadialoglVisible = false; approval(selectRow)">Yes</el-button>
       </span>
     </el-dialog>
 
@@ -140,17 +140,17 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span>Ready to online mr {{mrid}} ?</span>
+      <span>Ready to online mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="onlinedialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="onlinedialogVisible = false">Yes</el-button>
+        <el-button type="primary" @click="onlinedialogVisible = false; online(selectRow)">Yes</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllMr } from "@/api/mergerequest";
+import { getAllMr, firstReview, onlinePlugin } from "@/api/mergerequest";
 import { parseTime, statusFilter } from "@/utils";
 import { mapGetters } from "vuex";
 
@@ -160,7 +160,10 @@ export default {
   },
   data() {
     return {
-      mrid: "",
+      postData: {
+        mr_id: ""
+      },
+      selectRow: "",
       approvadialoglVisible: false,
       onlinedialogVisible: false,
       search: "",
@@ -214,15 +217,35 @@ export default {
     this.fetchData();
   },
   methods: {
+    success() {
+      this.$notify({
+        title: "Success",
+        message: "Modify Success",
+        type: "success"
+      });
+    },
+    approval(row) {
+      this.postData.mr_id = row.iid;
+      firstReview(this.postData).then(response => {
+        row.local_state = 5;
+        this.success();
+      });
+    },
+    online(row) {
+      this.postData.mr_id = row.iid;
+      onlinePlugin(this.postData).then(response => {
+        row.local_state = 6;
+        this.success();
+      });
+    },
     fetchData() {
       this.listLoading = true;
       getAllMr().then(response => {
         this.list = response.mrs.filter(item => {
           return (
-            item.merge_reviewer.includes(this.name) &&
-            (4 === item.local_state ||
-              5 === item.local_state ||
-              6 === item.local_state)
+            (item.merge_reviewer.includes(this.name) &&
+              (5 === item.local_state || 6 === item.local_state)) ||
+            (item.reviewer.includes(this.name) && 4 === item.local_state)
           );
         });
         this.listLoading = false;

@@ -58,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -77,6 +77,13 @@
               size="small"
               effect="dark"
             >First</el-tag>
+            <el-tag
+              v-if="scope.row.local_state === 0"
+              key="Reject"
+              type="danger"
+              size="small"
+              effect="dark"
+            >Reject</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Author" width="120" align="center">
@@ -101,13 +108,13 @@
               size="small"
               v-if="scope.row.local_state === 2"
               type="primary"
-              @click="approvadialoglVisible = true ;mrid=scope.row.iid"
+              @click="approvadialoglVisible = true ;selectRow=scope.row"
             >approval</el-button>
             <el-button
               size="small"
               v-if="scope.row.local_state === 2"
               type="danger"
-              @click="rejectdialogVisible = true ;mrid=scope.row.iid"
+              @click="rejectdialogVisible = true ;selectRow=scope.row"
             >reject</el-button>
           </template>
         </el-table-column>
@@ -120,10 +127,10 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span>Approval test for mr {{mrid}} ?</span>
+      <span>Approval test for mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="approvadialoglVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="approvadialoglVisible = false">Yes</el-button>
+        <el-button type="primary" @click="approvadialoglVisible = false; approval(selectRow)">Yes</el-button>
       </span>
     </el-dialog>
 
@@ -133,17 +140,17 @@
       width="30%"
       :before-close="handleClose"
     >
-      <span>Sure for Reject mr {{mrid}} ?</span>
+      <span>Sure for Reject mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="rejectdialogVisible = false">Cancel</el-button>
-        <el-button type="danger" @click="rejectdialogVisible = false">Yes</el-button>
+        <el-button type="danger" @click="rejectdialogVisible = false; reject(selectRow)">Yes</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllMr } from "@/api/mergerequest";
+import { getAllMr , approvalTest, rejectTest } from "@/api/mergerequest";
 import { parseTime, statusFilter } from "@/utils";
 import { mapGetters } from "vuex";
 
@@ -153,7 +160,10 @@ export default {
   },
   data() {
     return {
-      mrid: "",
+      postData:{
+        mr_id: ""
+      },
+      selectRow: "",
       approvadialoglVisible: false,
       rejectdialogVisible: false,
       search: "",
@@ -207,11 +217,32 @@ export default {
     this.fetchData();
   },
   methods: {
+    success() {
+      this.$notify({
+        title: "Success",
+        message: "Modify Success",
+        type: "success"
+      });
+    },
+    approval(row) {
+      this.postData.mr_id = row.iid
+      approvalTest(this.postData).then(response => {
+        row.local_state = 3
+        this.success()
+      });
+    },
+    reject(row) {
+      this.postData.mr_id = row.iid
+      rejectTest(this.postData).then(response => {
+        row.local_state = 0
+        this.success()
+      });
+    },
     fetchData() {
       this.listLoading = true;
       getAllMr().then(response => {
         this.list = response.mrs.filter(item => {
-          return item.tester.includes("jiashidi");
+          return item.tester.includes(this.name);
         });
         this.listLoading = false;
       });

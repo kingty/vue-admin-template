@@ -58,7 +58,7 @@
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -101,7 +101,7 @@
               size="small"
               v-if="scope.row.local_state === 1 || scope.row.local_state === 2"
               type="primary"
-              @click="diatributedialoglVisible = true ; mrid = scope.row.iid; selecttester=[]"
+              @click="diatributedialoglVisible = true ; selectRow = scope.row; selecttester=[]"
             >distribute</el-button>
           </template>
         </el-table-column>
@@ -112,29 +112,28 @@
       title="Select Tester"
       :visible.sync="diatributedialoglVisible"
       width="30%"
-      :before-close="handleClose"
     >
-    <span>Select tester for  mr {{mrid}} :</span>
+    <span>Select tester for  mr {{selectRow.iid}} :</span>
       <span>
         <el-select v-model="selecttester" multiple filterable placeholder="请选择">
           <el-option
             v-for="item in testers"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item"
+            :label="item"
+            :value="item"
           ></el-option>
         </el-select>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="diatributedialoglVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="diatributedialoglVisible = false">Yes</el-button>
+        <el-button type="primary" @click="diatributedialoglVisible = false; distribute(selectRow)">Yes</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAllMr } from "@/api/mergerequest";
+import { getAllMr, distributeTest } from "@/api/mergerequest";
 import { parseTime, statusFilter } from "@/utils";
 import { mapGetters } from "vuex";
 
@@ -144,30 +143,16 @@ export default {
   },
   data() {
     return {
+      selectRow: "",
+      postData:{
+        mr_id: "",
+        tester: ""
+      },
+      with: {
+        with: "tester"
+      },
       selecttester: [],
-      testers: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      mrid: "",
+      testers: null,
       diatributedialoglVisible: false,
       search: "",
       type: "",
@@ -220,9 +205,26 @@ export default {
     this.fetchData();
   },
   methods: {
+    success() {
+      this.$notify({
+        title: "Success",
+        message: "Modify Success",
+        type: "success"
+      });
+    },
+    distribute(row) {
+      this.postData.mr_id = row.iid
+      this.postData.tester = this.selecttester.toString()
+      distributeTest(this.postData).then(response => {
+        row.local_state = 2
+        row.tester = this.postData.tester
+        this.success()
+      });
+    },
     fetchData() {
       this.listLoading = true;
-      getAllMr().then(response => {
+      getAllMr(this.with).then(response => {
+        this.testers = response.testers
         this.list = response.mrs.filter(item => {
           return 1 === item.local_state || 2 === item.local_state;
         });
