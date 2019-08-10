@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Android',
+  title: 'Android Team',
 
   /**
    * @type {boolean} true | false
