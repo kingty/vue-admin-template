@@ -50,7 +50,7 @@ export function distributeReview(data) {
 
 export function firstReview(data) {
   return request({
-    url: '/mergerequest/approvalreview',
+    url: '/mergerequest/urgent',
     method: 'post',
     data
   })

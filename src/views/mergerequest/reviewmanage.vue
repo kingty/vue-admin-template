@@ -129,7 +129,6 @@
       title="Select Tester"
       :visible.sync="distributedialoglVisible"
       width="40%"
-      :before-close="handleClose"
     >
       Select tester for mr {{selectedRow.iid}}
       <br />
@@ -159,7 +158,6 @@
       title="Confirm"
       :visible.sync="firstdialoglVisible"
       width="30%"
-      :before-close="handleClose"
     >
       <span>Make or remove mr {{selectedRow.iid}} review first?</span>
       <span slot="footer" class="dialog-footer">
@@ -203,7 +201,7 @@ export default {
       search: "",
       type: "",
       state: "",
-      list: null,
+      list: [],
       listLoading: true,
       types: [
         {

@@ -130,7 +130,7 @@ export default {
       search: "",
       type: "",
       state: "",
-      list: null,
+      list: [],
       listLoading: true,
       types: [
         {

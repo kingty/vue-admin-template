@@ -53,8 +53,22 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
-  },
+  }
+]
 
+
+// const testAdmin = 1;
+// const tester = 2;
+// const reviewAdmin = 4;
+// const mergeReviewer = 8;
+// const reviewer = 16;
+// const developer = 32;
+/**
+ * asyncRoutes
+ * 
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: '/mergerequest',
     component: Layout,
@@ -63,30 +77,35 @@ export const constantRoutes = [
     meta: { title: 'Mr', icon: 'example' },
     children: [
       {
+        roles: 28,
         path: '/codereview',
         name: 'Code Review',
         component: () => import('@/views/mergerequest/codereview'),
         meta: { title: 'Code Review', icon: 'table' }
       },
       {
+        roles: 32,
         path: '/mymr',
         name: 'My MR',
         component: () => import('@/views/mergerequest/mymr'),
         meta: { title: 'My MR', icon: 'user' }
       },
       {
+        roles: 3,
         path: '/mytest',
         name: 'My Test',
         component: () => import('@/views/mergerequest/mytest'),
         meta: { title: 'My Test', icon: 'user' }
       },
       {
+        roles: 1,
         path: '/testmanage',
         name: 'Test Manage',
         component: () => import('@/views/mergerequest/testmanage'),
         meta: { title: 'Test Manage', icon: 'user' }
       },
       {
+        roles: 4,
         path: '/reviewmanage',
         name: 'Review Manage',
         component: () => import('@/views/mergerequest/reviewmanage'),
@@ -99,9 +118,7 @@ export const constantRoutes = [
         meta: { title: 'All Mr', icon: 'user' }
       }
     ]
-  },
-
-  {
+  },{
     path: '/form',
     component: Layout,
     children: [
@@ -112,83 +129,7 @@ export const constantRoutes = [
         meta: { title: 'Form', icon: 'form' }
       }
     ]
-  }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
   },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

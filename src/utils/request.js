@@ -68,7 +68,6 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
-      console.log(res)
       return res.data
     }
   },

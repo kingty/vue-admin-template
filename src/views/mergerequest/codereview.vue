@@ -125,7 +125,6 @@
       title="Confirm"
       :visible.sync="approvadialoglVisible"
       width="30%"
-      :before-close="handleClose"
     >
       <span>Approval first review for mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
@@ -138,7 +137,6 @@
       title="Confirm"
       :visible.sync="onlinedialogVisible"
       width="30%"
-      :before-close="handleClose"
     >
       <span>Ready to online mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
@@ -169,7 +167,7 @@ export default {
       search: "",
       type: "",
       state: "",
-      list: null,
+      list: [],
       listLoading: true,
       types: [
         {
