@@ -8,6 +8,15 @@ export function getAllMr(params) {
   })
 }
 
+
+export function requestTesting(data) {
+  return request({
+    url: '/mergerequest/requesttesting',
+    method: 'post',
+    data
+  })
+}
+
 export function approvalReview(data) {
   return request({
     url: '/mergerequest/approvalreview',

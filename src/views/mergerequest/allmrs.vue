@@ -56,6 +56,9 @@
         <el-table-column type="expand">
           <template slot-scope="scope">
             <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item class="detail" label="Offline Time" v-if="scope.row.is_ab">
+                <span>{{ scope.row.offline_time | parseTime }}</span>
+              </el-form-item>
               <el-form-item class="detail" label="MRLink">
                 <span>
                   <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
@@ -75,8 +78,15 @@
               key="First"
               type="danger"
               size="small"
-              effect="dark"
+              effect="plain"
             >First</el-tag>
+            <el-tag
+              v-if="scope.row.is_ab"
+              key="A/B"
+              type="success"
+              size="small"
+              effect="plain"
+            >A/B</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Author" width="150" align="center">
