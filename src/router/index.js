@@ -81,41 +81,41 @@ export const asyncRoutes = [
         path: '/codereview',
         name: 'Code Review',
         component: () => import('@/views/mergerequest/codereview'),
-        meta: { title: 'Code Review', icon: 'table' }
+        meta: { title: 'Code Review', icon: 'eye-open' }
       },
       {
         roles: 32,
         path: '/mymr',
         name: 'My MR',
         component: () => import('@/views/mergerequest/mymr'),
-        meta: { title: 'My MR', icon: 'user' }
+        meta: { title: 'My MR', icon: 'people' }
       },
       {
         roles: 3,
         path: '/mytest',
         name: 'My Test',
         component: () => import('@/views/mergerequest/mytest'),
-        meta: { title: 'My Test', icon: 'user' }
+        meta: { title: 'My Test', icon: 'bug' }
       },
       {
         roles: 1,
         path: '/testmanage',
         name: 'Test Manage',
         component: () => import('@/views/mergerequest/testmanage'),
-        meta: { title: 'Test Manage', icon: 'user' }
+        meta: { title: 'Test Manage', icon: 'skill' }
       },
       {
         roles: 4,
         path: '/reviewmanage',
         name: 'Review Manage',
         component: () => import('@/views/mergerequest/reviewmanage'),
-        meta: { title: 'Review Manage', icon: 'user' }
+        meta: { title: 'Review Manage', icon: 'skill' }
       },
       {
         path: '/allmrs',
         name: 'AllMrs',
         component: () => import('@/views/mergerequest/allmrs'),
-        meta: { title: 'All Mr', icon: 'user' }
+        meta: { title: 'All Mr', icon: 'list' }
       }
     ]
   },

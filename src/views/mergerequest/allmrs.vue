@@ -171,12 +171,6 @@ export default {
     fetchData() {
       this.listLoading = true;
       getAllMr().then(response => {
-        // this.list = response.mrs.filter(item => {
-        //   return (
-        //     item.merge_reviewer.includes(name) &&
-        //     (5 === item.local_state || 6 === item.local_state)
-        //   )
-        // });
         this.list = response.mrs;
         this.listLoading = false;
       });
