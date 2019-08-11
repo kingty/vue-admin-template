@@ -160,9 +160,13 @@ export default {
   data() {
     return {
       form: {
+        is_ab: false,
+        offline_time: ""
+      },
+      postData: {
         mr_id: "",
         owner: "",
-        is_ab: false,
+        is_ab: 0,
         offline_time: ""
       },
       selectRow: "",
@@ -232,12 +236,19 @@ export default {
           message: "Please Pick a Offline Time"
         });
       } else {
-        this.form.mr_id = row.iid;
-        this.form.owner = this.name;
-        requestTesting(this.form).then(response => {
+        this.postData.mr_id = row.iid;
+        this.postData.owner = this.name;
+        this.postData.offline_time = this.form.offline_time;
+        if (this.form.is_ab) {
+          this.postData.is_ab = 1;
+        } else {
+          this.postData.is_ab = 0;
+        }
+
+        requestTesting(this.postData).then(response => {
           row.local_state = 1;
-          row.is_ab = this.form.is_ab;
-          row.offline_time = this.form.offline_time;
+          row.is_ab = this.postData.is_ab;
+          row.offline_time = this.postData.offline_time;
           this.success();
         });
       }

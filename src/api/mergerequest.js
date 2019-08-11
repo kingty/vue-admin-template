@@ -1,5 +1,39 @@
 import request from '@/utils/request'
 
+
+export function getABMr(params) {
+  return request({
+    url: '/mergerequest/abmr',
+    method: 'get',
+    params
+  })
+}
+
+export function logsForMr(params) {
+  return request({
+    url: '/mergerequest/logsformr',
+    method: 'get',
+    params
+  })
+}
+
+
+export function changeABInfo(data) {
+  return request({
+    url: '/mergerequest/changeabinfo',
+    method: 'post',
+    data
+  })
+}
+export function offlineAb(data) {
+  return request({
+    url: '/mergerequest/offlineab',
+    method: 'post',
+    data
+  })
+}
+
+
 export function getAllMr(params) {
   return request({
     url: '/mergerequest/allmr',

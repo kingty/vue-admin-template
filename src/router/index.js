@@ -116,6 +116,12 @@ export const asyncRoutes = [
         name: 'AllMrs',
         component: () => import('@/views/mergerequest/allmrs'),
         meta: { title: 'All Mr', icon: 'list' }
+      },
+      {
+        path: '/abtest',
+        name: 'A/B',
+        component: () => import('@/views/mergerequest/abtest'),
+        meta: { title: 'A/B', icon: 'clipboard' }
       }
     ]
   },
