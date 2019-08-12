@@ -63,6 +63,7 @@ export const constantRoutes = [
 // const mergeReviewer = 8;
 // const reviewer = 16;
 // const developer = 32;
+// const abmanager = 64
 /**
  * asyncRoutes
  * 
@@ -112,16 +113,17 @@ export const asyncRoutes = [
         meta: { title: 'Review Manage', icon: 'skill' }
       },
       {
-        path: '/allmrs',
-        name: 'AllMrs',
-        component: () => import('@/views/mergerequest/allmrs'),
-        meta: { title: 'All Mr', icon: 'list' }
-      },
-      {
+        roles: 64,
         path: '/abtest',
         name: 'A/B',
         component: () => import('@/views/mergerequest/abtest'),
         meta: { title: 'A/B', icon: 'clipboard' }
+      },
+      {
+        path: '/allmrs',
+        name: 'AllMrs',
+        component: () => import('@/views/mergerequest/allmrs'),
+        meta: { title: 'All Mr', icon: 'list' }
       }
     ]
   },
