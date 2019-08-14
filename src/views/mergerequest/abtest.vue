@@ -32,29 +32,29 @@
         fit
         highlight-current-row
       >
-        <el-table-column label="MRID" width="200">
+        <el-table-column label="MRID" min-width="10%">
           <template slot-scope="scope">
             <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.mr_id}}</el-link>
           </template>
         </el-table-column>
-        <el-table-column label="Author" width="200" align="center">
+        <el-table-column label="Author" min-width="10%" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.owner }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Offline Time" width="200">
+        <el-table-column label="Offline Time" min-width="10%">
           <template slot-scope="scope">
             <i class="el-icon-time" />
             {{ scope.row.offline_time| parseTime }}
           </template>
         </el-table-column>
 
-        <el-table-column label="Progress" align="center">
+        <el-table-column label="Progress" align="center" min-width="50%">
           <template slot-scope="scope" height="100">
             <el-slider v-model="scope.row.state" :marks="scope.row | statusFilter" :max="6"></el-slider>
           </template>
         </el-table-column>
-        <el-table-column label width="250" align="center">
+        <el-table-column label width="250" align="center" min-width="20%">
           <template slot-scope="scope">
             <el-button
               size="small"

@@ -70,7 +70,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="MRID" width="120">
+        <el-table-column label="MRID" min-width="10%">
           <template slot-scope="scope">
             {{ scope.row.iid }}
             <el-tag
@@ -96,32 +96,29 @@
             >Reject</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Author" width="120" align="center">
+        <el-table-column label="Author" min-width="10%" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.author.username }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="MRTitle" width="300">
+        <el-table-column label="MRTitle" min-width="20%">
           <template slot-scope="scope">{{ scope.row.title }}</template>
         </el-table-column>
-        <el-table-column label="TargetBranch" width="150" align="center">
-          <template slot-scope="scope">{{ scope.row.target_branch }}</template>
-        </el-table-column>
-        <el-table-column label="Progress" align="center">
+        <el-table-column label="Progress" align="center" min-width="45%">
           <template slot-scope="scope" height="100">
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
           </template>
         </el-table-column>
-        <el-table-column label width="200" align="center">
+        <el-table-column label min-width="15%" align="center">
           <template slot-scope="scope">
             <el-button
-              size="small"
+              size="mini"
               v-if="scope.row.local_state === 2"
               type="primary"
               @click="approvadialoglVisible = true ;selectRow=scope.row"
             >approval</el-button>
             <el-button
-              size="small"
+              size="mini"
               v-if="scope.row.local_state === 2"
               type="danger"
               @click="rejectdialogVisible = true ;selectRow=scope.row"
