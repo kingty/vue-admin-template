@@ -1,4 +1,4 @@
-import { login, getInfo } from '@/api/user'
+import { login, getInfo, signup } from '@/api/user'
 import { getToken, setToken, removeToken, setName, getName, removeName } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -34,6 +34,17 @@ const actions = {
         setToken(response.token)
         commit('SET_NAME', response.name)
         setName(response.name)
+        resolve()
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  },
+  signup({ commit }, userInfo) {
+    const { username, password } = userInfo
+    return new Promise((resolve, reject) => {
+      signup({ username: username.trim(), password: password }).then(response => {
         resolve()
       }).catch(error => {
         console.log(error)
