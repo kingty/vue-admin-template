@@ -24,12 +24,14 @@ const mutations = {
   }
 }
 
+var md5 = require('md5');
+
 const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ username: username.trim(), password: md5(password) }).then(response => {
         commit('SET_TOKEN', response.token)
         setToken(response.token)
         commit('SET_NAME', response.name)
@@ -44,7 +46,7 @@ const actions = {
   signup({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      signup({ username: username.trim(), password: password }).then(response => {
+      signup({ username: username.trim(), password: md5(password) }).then(response => {
         resolve()
       }).catch(error => {
         console.log(error)
