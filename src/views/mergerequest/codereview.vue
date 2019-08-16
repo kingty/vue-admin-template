@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import { getAllMr, firstReview, onlinePlugin } from "@/api/mergerequest";
+import { getAllMr, approvalReview, onlinePlugin } from "@/api/mergerequest";
 import { parseTime, statusFilter } from "@/utils";
 import { mapGetters } from "vuex";
 
@@ -232,7 +232,7 @@ export default {
     },
     approval(row) {
       this.postData.mr_id = row.iid;
-      firstReview(this.postData).then(response => {
+      approvalReview(this.postData).then(response => {
         row.local_state = 5;
         this.success();
       });
