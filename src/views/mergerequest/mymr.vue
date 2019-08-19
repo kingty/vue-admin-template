@@ -113,7 +113,7 @@
               v-if="scope.row.local_state === 0"
               type="primary"
               @click="requestdialogVisible = true; selectRow = scope.row; form.is_ab = true; form.offline_time = ''"
-            >request review</el-button>
+            >request test</el-button>
           </template>
         </el-table-column>
       </el-table>
