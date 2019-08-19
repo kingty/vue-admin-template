@@ -2,7 +2,11 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="6">
-        <div class="grid-content bg-purple"></div>
+        <div class="grid-content bg-purple">
+          <el-tag type="info">
+            共 <strong>{{list.length}}</strong> 条
+          </el-tag>
+        </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content bg-purple"></div>

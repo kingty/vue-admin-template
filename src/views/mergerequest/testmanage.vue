@@ -2,7 +2,11 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="6">
-        <div class="grid-content bg-purple"></div>
+        <div class="grid-content bg-purple">
+          <el-tag type="info">
+            共 <strong>{{list.length}}</strong> 条
+          </el-tag>
+        </div>
       </el-col>
       <el-col :span="6">
         <div class="grid-content bg-purple"></div>
@@ -44,6 +48,7 @@
         :data="list.filter(data => (!search 
         || data.title.toLowerCase().includes(search.toLowerCase()) 
         || data.iid.toString().includes(search.toLowerCase())
+        || data.tester.toString().includes(search.toLowerCase())
         || data.author.username.toLowerCase().includes(search.toLowerCase()))
         && (!type || data.project_id===type)
         && (!state || data.local_state===state)
@@ -61,7 +66,11 @@
               </el-form-item>
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link
+                    :href="scope.row.web_url"
+                    target="_blank"
+                    type="primary"
+                  >{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -80,13 +89,7 @@
               size="small"
               effect="plain"
             >First</el-tag>
-            <el-tag
-              v-if="scope.row.is_ab"
-              key="A/B"
-              type="success"
-              size="small"
-              effect="plain"
-            >A/B</el-tag>
+            <el-tag v-if="scope.row.is_ab" key="A/B" type="success" size="small" effect="plain">A/B</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Author" min-width="10%" align="center">
@@ -97,7 +100,7 @@
         <el-table-column label="MRTitle" min-width="20%">
           <template slot-scope="scope">{{ scope.row.title }}</template>
         </el-table-column>
-        
+
         <el-table-column label="Progress" align="center" min-width="50%">
           <template slot-scope="scope" height="100">
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
@@ -116,25 +119,19 @@
       </el-table>
     </el-row>
 
-    <el-dialog
-      title="Select Tester"
-      :visible.sync="diatributedialoglVisible"
-      width="30%"
-    >
-    <span>Select tester for  mr {{selectRow.iid}} :</span>
+    <el-dialog title="Select Tester" :visible.sync="diatributedialoglVisible" width="30%">
+      <span>Select tester for mr {{selectRow.iid}} :</span>
       <span>
         <el-select v-model="selecttester" multiple filterable placeholder="请选择">
-          <el-option
-            v-for="item in testers"
-            :key="item"
-            :label="item"
-            :value="item"
-          ></el-option>
+          <el-option v-for="item in testers" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="diatributedialoglVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="diatributedialoglVisible = false; distribute(selectRow)">Yes</el-button>
+        <el-button
+          type="primary"
+          @click="diatributedialoglVisible = false; distribute(selectRow)"
+        >Yes</el-button>
       </span>
     </el-dialog>
   </div>
@@ -152,7 +149,7 @@ export default {
   data() {
     return {
       selectRow: "",
-      postData:{
+      postData: {
         mr_id: "",
         tester: ""
       },
@@ -221,18 +218,18 @@ export default {
       });
     },
     distribute(row) {
-      this.postData.mr_id = row.iid
-      this.postData.tester = this.selecttester.toString()
+      this.postData.mr_id = row.iid;
+      this.postData.tester = this.selecttester.toString();
       distributeTest(this.postData).then(response => {
-        row.local_state = 2
-        row.tester = this.postData.tester
-        this.success()
+        row.local_state = 2;
+        row.tester = this.postData.tester;
+        this.success();
       });
     },
     fetchData() {
       this.listLoading = true;
       getAllMr(this.with).then(response => {
-        this.testers = response.testers
+        this.testers = response.testers;
         this.list = response.mrs.filter(item => {
           return 1 === item.local_state || 2 === item.local_state;
         });
