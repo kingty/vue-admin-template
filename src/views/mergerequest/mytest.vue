@@ -4,7 +4,8 @@
       <el-col :span="6">
         <div class="grid-content bg-purple">
           <el-tag type="info">
-            共 <strong>{{list.length}}</strong> 条
+            共
+            <strong>{{list.length}}</strong> 条
           </el-tag>
         </div>
       </el-col>
@@ -65,7 +66,11 @@
               </el-form-item>
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link
+                    :href="scope.row.web_url"
+                    target="_blank"
+                    type="primary"
+                  >{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -74,7 +79,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="MRID" min-width="10%">
+        <el-table-column label="MRID" min-width="15%">
           <template slot-scope="scope">
             {{ scope.row.iid }}
             <el-tag
@@ -84,13 +89,7 @@
               size="small"
               effect="plain"
             >First</el-tag>
-            <el-tag
-              v-if="scope.row.is_ab"
-              key="A/B"
-              type="success"
-              size="small"
-              effect="plain"
-            >A/B</el-tag>
+            <el-tag v-if="scope.row.is_ab" key="A/B" type="success" size="small" effect="plain">A/B</el-tag>
             <el-tag
               v-if="scope.row.local_state === 0"
               key="Reject"
@@ -113,30 +112,36 @@
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
           </template>
         </el-table-column>
-        <el-table-column label min-width="15%" align="center">
+        <el-table-column label min-width="10%" align="center">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              v-if="scope.row.local_state === 2"
-              type="primary"
-              @click="approvadialoglVisible = true ;selectRow=scope.row"
-            >approval</el-button>
-            <el-button
-              size="mini"
-              v-if="scope.row.local_state === 2"
-              type="danger"
-              @click="rejectdialogVisible = true ;selectRow=scope.row"
-            >reject</el-button>
+            <el-dropdown trigger="click" @command="handleCommand">
+              <el-button type="primary">
+                Actions
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  :command="composeValue('approval', scope.row)"
+                  icon="el-icon-check"
+                  v-if="scope.row.local_state === 2"
+                >approval</el-dropdown-item>
+                <el-dropdown-item
+                  :command="composeValue('reject', scope.row)"
+                  icon="el-icon-remove-outline"
+                  v-if="scope.row.local_state === 2"
+                >reject</el-dropdown-item>
+                <el-dropdown-item
+                  :command="composeValue('build', scope.row)"
+                  icon="el-icon-refresh"
+                >build</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
     </el-row>
 
-    <el-dialog
-      title="Confirm"
-      :visible.sync="approvadialoglVisible"
-      width="30%"
-    >
+    <el-dialog title="Confirm" :visible.sync="approvadialoglVisible" width="30%">
       <span>Approval test for mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="approvadialoglVisible = false">Cancel</el-button>
@@ -144,11 +149,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      title="Confirm"
-      :visible.sync="rejectdialogVisible"
-      width="30%"
-    >
+    <el-dialog title="Confirm" :visible.sync="rejectdialogVisible" width="30%">
       <span>Sure for Reject mr {{selectRow.iid}} ?</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="rejectdialogVisible = false">Cancel</el-button>
@@ -159,8 +160,8 @@
 </template>
 
 <script>
-import { getAllMr , approvalTest, rejectTest } from "@/api/mergerequest";
-import { parseTime, statusFilter } from "@/utils";
+import { getAllMr, approvalTest, rejectTest } from "@/api/mergerequest";
+import { mr2BuildData, parseTime, statusFilter } from "@/utils";
 import { mapGetters } from "vuex";
 
 export default {
@@ -169,7 +170,7 @@ export default {
   },
   data() {
     return {
-      postData:{
+      postData: {
         mr_id: ""
       },
       selectRow: "",
@@ -226,6 +227,32 @@ export default {
     this.fetchData();
   },
   methods: {
+    composeValue(type, row) {
+      return {
+        type: type,
+        row: row
+      };
+    },
+
+    handleCommand(command) {
+      this.selectRow = command.row;
+      if (command.type === "approval") {
+        this.approvadialoglVisible = true;
+      } else if (command.type === "reject") {
+        this.rejectdialogVisible = true;
+      } else if (command.type === "build") {
+        const buildData = mr2BuildData(command.row);
+        console.log(buildData);
+        this.$store
+          .dispatch("mr/buildData", buildData)
+          .then(() => {
+            this.$router.push({
+              path: "/build"
+            });
+          })
+          .catch(() => {});
+      }
+    },
     success() {
       this.$notify({
         title: "Success",
@@ -234,17 +261,17 @@ export default {
       });
     },
     approval(row) {
-      this.postData.mr_id = row.iid
+      this.postData.mr_id = row.iid;
       approvalTest(this.postData).then(response => {
-        row.local_state = 3
-        this.success()
+        row.local_state = 3;
+        this.success();
       });
     },
     reject(row) {
-      this.postData.mr_id = row.iid
+      this.postData.mr_id = row.iid;
       rejectTest(this.postData).then(response => {
-        row.local_state = 0
-        this.success()
+        row.local_state = 0;
+        this.success();
       });
     },
     fetchData() {

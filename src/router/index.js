@@ -129,6 +129,13 @@ export const asyncRoutes = [
         name: 'AllMrs',
         component: () => import('@/views/mergerequest/allmrs'),
         meta: { title: 'All Mr', icon: 'list' }
+      },
+      {
+        path: '/build',
+        name: 'Build',
+        component: () => import('@/views/mergerequest/build'),
+        meta: { title: 'Build', icon: 'list' },
+        hidden: true
       }
     ]
   },
