@@ -4,7 +4,8 @@
       <el-col :span="6">
         <div class="grid-content bg-purple">
           <el-tag type="info">
-            共 <strong>{{list.length}}</strong> 条
+            共
+            <strong>{{list.length}}</strong> 条
           </el-tag>
         </div>
       </el-col>
@@ -68,7 +69,11 @@
               </el-form-item>
               <el-form-item class="detail" label="MRLink">
                 <span>
-                  <el-link :href="scope.row.web_url" target="_blank" type="primary">{{scope.row.web_url}}</el-link>
+                  <el-link
+                    :href="scope.row.web_url"
+                    target="_blank"
+                    type="primary"
+                  >{{scope.row.web_url}}</el-link>
                 </span>
               </el-form-item>
               <el-form-item class="detail" label="Description">
@@ -77,7 +82,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column  label="MRID" min-width="10%">
+        <el-table-column label="MRID" min-width="10%">
           <template slot-scope="scope">
             {{ scope.row.iid }}
             <el-tag
@@ -87,13 +92,7 @@
               size="small"
               effect="plain"
             >First</el-tag>
-            <el-tag
-              v-if="scope.row.is_ab"
-              key="A/B"
-              type="success"
-              size="small"
-              effect="plain"
-            >A/B</el-tag>
+            <el-tag v-if="scope.row.is_ab" key="A/B" type="success" size="small" effect="plain">A/B</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="Author" min-width="10%" align="center">
@@ -101,15 +100,24 @@
             <span>{{ scope.row.author.username }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="MRTitle" min-width="20%">
+        <el-table-column label="MRTitle" min-width="15%">
           <template slot-scope="scope">{{ scope.row.title }}</template>
         </el-table-column>
         <el-table-column label="TargetBranch" min-width="10%" align="center">
           <template slot-scope="scope">{{ scope.row.target_branch }}</template>
         </el-table-column>
-        <el-table-column label="Progress" align="center" min-width="50%">
+        <el-table-column label="Progress" align="center" min-width="45%">
           <template slot-scope="scope" height="100">
             <el-slider v-model="scope.row.local_state" :marks="scope.row | statusFilter" :max="6"></el-slider>
+          </template>
+        </el-table-column>
+        <el-table-column label="Build" align="center" min-width="10%">
+          <template slot-scope="scope">
+            <el-link
+              @click="toBuild(scope.row)"
+              target="_blank"
+              type="primary"
+            >Build Task</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -119,7 +127,7 @@
 
 <script>
 import { getAllMr } from "@/api/mergerequest";
-import { parseTime, statusFilter } from "@/utils";
+import { parseTime, statusFilter, mr2BuildData } from "@/utils";
 
 export default {
   data() {
@@ -175,6 +183,17 @@ export default {
     this.fetchData();
   },
   methods: {
+    toBuild(selectRow) {
+      const buildData = mr2BuildData(selectRow, false);
+      this.$store
+        .dispatch("mr/buildData", buildData)
+        .then(() => {
+          this.$router.push({
+            path: "/build"
+          });
+        })
+        .catch(() => {});
+    },
     fetchData() {
       this.listLoading = true;
       getAllMr().then(response => {

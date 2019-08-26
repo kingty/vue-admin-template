@@ -1,5 +1,4 @@
 <template>
-  
   <div class="app-container">
     <el-row :gutter="20"></el-row>
     <el-row :gutter="20">
@@ -30,7 +29,7 @@
     </el-row>
     <el-row :gutter="20"></el-row>
 
-    <el-row :gutter="20" justify="end">
+    <el-row :gutter="20" justify="end" v-if="buildData.hasbutton">
       <el-button type="success" @click="debugDialoglVisible = true;">Build Debug</el-button>
       <el-button type="danger" @click="dexguardDialoglVisible = true;">Build Dexguard</el-button>
       <el-button
@@ -49,47 +48,92 @@
         fit
         highlight-current-row
       >
-        <el-table-column label="Sha" min-width="30%" align="center">
-          <template slot-scope="scope">{{ scope.row.sha }}</template>
-        </el-table-column>
-        <el-table-column label="StartTime" min-width="20%" align="center">
+        <el-table-column label="State" min-width="15%" align="center">
           <template slot-scope="scope">
-            <i class="el-icon-time" />
-            {{ scope.row.start_time | parseTime }}
-          </template>
-        </el-table-column>
-        <el-table-column label="State" min-width="10%" align="center">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 0" key="building" size="small" effect="plain">building</el-tag>
+            <el-tag
+              v-if="scope.row.state === 0 && !timeout(scope.row.start_time, scope.row.build_type===0)"
+              key="building"
+              size="small"
+              effect="plain"
+            >building</el-tag>
 
             <el-tag
               v-if="scope.row.state === 1"
               key="success"
               type="success"
               size="small"
-              effect="dark"
+              effect="plain"
             >success</el-tag>
             <el-tag
               v-if="scope.row.state === 2"
               key="failed"
               type="danger"
               size="small"
-              effect="dark"
+              effect="plain"
             >failed</el-tag>
             <el-tag
-              v-if="scope.row.state === 3"
+              v-if="scope.row.state === 3 || (timeout(scope.row.start_time, scope.row.build_type===0) && scope.row.state === 0)"
               key="timeout"
               type="warning"
               size="small"
-              effect="dark"
+              effect="plain"
             >timeout</el-tag>
+
+            <el-tag
+              v-if="scope.row.build_type === 1 "
+              key="type"
+              type="danger"
+              size="small"
+              effect="plain"
+            >dexgurad</el-tag>
           </template>
         </el-table-column>
+
+        <el-table-column label="StartTime" min-width="15%" align="center">
+          <template slot-scope="scope">
+            <i class="el-icon-time" />
+            {{ scope.row.start_time | parseTime }}
+          </template>
+        </el-table-column>
+
         <el-table-column label="Builder" min-width="10%" align="center">
           <template slot-scope="scope">{{ scope.row.builder }}</template>
         </el-table-column>
-        <el-table-column label="ApkPath" min-width="30%" align="center">
-          <template slot-scope="scope">{{ scope.row.uuid }}</template>
+        <el-table-column label="Last Commit" min-width="30%" align="center">
+          <template slot-scope="scope">{{ scope.row.sha }}</template>
+        </el-table-column>
+        <el-table-column label="Log" min-width="10%" align="center">
+          <template slot-scope="scope">
+            <el-link
+              :href=" scope.row.build_url.replace('https://jenkins-android.p1staff.com/','http://apk.p1staff.com/') + '/consoleFull'"
+              target="_blank"
+              type="primary"
+            >{{scope.row.build_number}}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column label="Apk" min-width="20%" align="center">
+          <template slot-scope="scope">
+            <el-link
+              v-if="scope.row.state === 1"
+              :href=" 'http://apk.p1staff.com/tantan/' + scope.row.apk_path"
+              target="_blank"
+              type="primary"
+            >Local</el-link>
+            <span v-if="scope.row.state === 1">-</span>
+            <el-link
+              v-if="scope.row.state === 1"
+              :href=" 'http://apk.p1staff.com/tantan/' + scope.row.apk_path.replace('.apk', '-intl.apk')"
+              target="_blank"
+              type="primary"
+            >Intl</el-link>
+            <span v-if="scope.row.state === 1">-</span>
+            <el-link
+              v-if="scope.row.state === 1"
+              :href=" 'http://apk.p1staff.com/tantan/' + getdir(scope.row.apk_path)"
+              target="_blank"
+              type="primary"
+            >Dir</el-link>
+          </template>
         </el-table-column>
       </el-table>
     </el-row>
@@ -144,12 +188,12 @@ export default {
   methods: {
     debug() {
       buildDebug(this.buildData).then(response => {
-        this.list.push(response);
+        this.list.unshift(response);
       });
     },
     dexguard() {
       buildDexguard(this.buildData).then(response => {
-        this.list.push(response);
+        this.list.unshift(response);
       });
     },
     fetchData(mr_id) {
@@ -160,6 +204,37 @@ export default {
         this.list = response.builds;
         this.listLoading = false;
       });
+    },
+    timeout(time, debug) {
+      let date;
+      if (typeof time === "object") {
+        date = time;
+      } else {
+        if (typeof time === "string" && /^[0-9]+$/.test(time)) {
+          time = parseInt(time);
+        }
+        if (typeof time === "number" && time.toString().length === 10) {
+          time = time * 1000;
+        }
+        date = new Date(time);
+      }
+      const now = Date.now();
+
+      const diff = (now - date) / 1000;
+
+      if (diff > 3600 && debug) {
+        //debug 1h time out
+        return true;
+      }
+      if (!debug && diff > 8 * 3600) {
+        // dexguard 8h time out
+        return true;
+      }
+      return false;
+    },
+    getdir(path) {
+      var obj = path.lastIndexOf("/");
+      return path.substr(0, obj);
     }
   }
 };

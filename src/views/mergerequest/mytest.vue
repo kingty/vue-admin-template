@@ -241,8 +241,7 @@ export default {
       } else if (command.type === "reject") {
         this.rejectdialogVisible = true;
       } else if (command.type === "build") {
-        const buildData = mr2BuildData(command.row);
-        console.log(buildData);
+        const buildData = mr2BuildData(command.row, true);
         this.$store
           .dispatch("mr/buildData", buildData)
           .then(() => {

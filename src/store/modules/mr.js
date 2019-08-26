@@ -1,7 +1,6 @@
 
 const state = {
-  buildData: '',
-
+  buildData: ''
 }
 
 const mutations = {

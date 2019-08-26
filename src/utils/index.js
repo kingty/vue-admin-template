@@ -109,14 +109,15 @@ export function param2Obj (url) {
   )
 }
 
-export function mr2BuildData (mr) {
+export function mr2BuildData (mr, canbuild) {
   var postBulidData = {
     mrtitle: '',
     mrid: '',
     mrb: '',
     mrhash: '',
     mrtb: '',
-    mrowner: ''
+    mrowner: '',
+    hasbutton: canbuild
   }
   postBulidData.mrtitle = mr.title
   postBulidData.mrid = mr.iid
