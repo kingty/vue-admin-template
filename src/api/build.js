@@ -24,3 +24,12 @@ export function buildDexguard(data) {
     data
   })
 }
+
+
+export function getBuildTask(params) {
+  return request({
+    url: 'build/getbuildtask',
+    method: 'get',
+    params
+  })
+}

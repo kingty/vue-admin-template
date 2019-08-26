@@ -104,7 +104,9 @@
         </el-table-column>
         <el-table-column label="Log" min-width="10%" align="center">
           <template slot-scope="scope">
+            <el-button v-if="scope.row.build_number===0" size= "mini" type="success" @click="refreshBuildTask(scope.row)">fresh</el-button>
             <el-link
+              v-if="scope.row.build_number!==0"
               :href=" scope.row.build_url.replace('https://jenkins-android.p1staff.com/','http://apk.p1staff.com/') + '/consoleFull'"
               target="_blank"
               type="primary"
@@ -157,7 +159,7 @@
 </template>
 
 <script>
-import { getAllBuildByMr, buildDebug, buildDexguard } from "@/api/build";
+import { getAllBuildByMr, buildDebug, buildDexguard, getBuildTask } from "@/api/build";
 import { parseTime, statusFilter } from "@/utils";
 
 import { mapGetters } from "vuex";
@@ -170,6 +172,9 @@ export default {
     return {
       param: {
         mr_id: ""
+      },
+      taskParam: {
+        uuid: ""
       },
       list: [],
       listLoading: true,
@@ -186,6 +191,14 @@ export default {
     }
   },
   methods: {
+    refreshBuildTask(row) {
+      this.taskParam.uuid=row.uuid
+      console.log(this.taskParam)
+      getBuildTask(this.taskParam).then(response => {
+        row.build_number = response.build_number;
+        row.build_url = response.build_url;
+      });
+    },
     debug() {
       buildDebug(this.buildData).then(response => {
         this.list.unshift(response);
