@@ -29,9 +29,9 @@
     </el-row>
     <el-row :gutter="20"></el-row>
 
-    <el-row :gutter="20" justify="end" v-if="buildData.hasbutton">
-      <el-button type="success" @click="debugDialoglVisible = true;">Build Debug</el-button>
-      <el-button type="danger" @click="dexguardDialoglVisible = true;">Build Dexguard</el-button>
+    <el-row :gutter="20" justify="end" >
+      <el-button type="success" v-if="buildData.hasbutton" @click="debugDialoglVisible = true;">Build Debug</el-button>
+      <el-button type="danger" v-if="buildData.hasbutton" @click="dexguardDialoglVisible = true;">Build Dexguard</el-button>
       <el-button
         type="primary"
         @click="fresh = true;fetchData(buildData.mrid)"
