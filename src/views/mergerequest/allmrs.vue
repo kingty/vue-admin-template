@@ -114,6 +114,7 @@
         <el-table-column label="Build" align="center" min-width="10%">
           <template slot-scope="scope">
             <el-link
+              v-if="scope.row.project_id === 284"
               @click="toBuild(scope.row)"
               target="_blank"
               type="primary"

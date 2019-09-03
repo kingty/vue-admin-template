@@ -133,6 +133,7 @@
                 <el-dropdown-item
                   :command="composeValue('build', scope.row)"
                   icon="el-icon-refresh"
+                  v-if="scope.row.project_id === 284"
                 >build</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
