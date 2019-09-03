@@ -159,8 +159,8 @@
 </template>
 
 <script>
-import { getAllBuildByMr, buildDebug, buildDexguard, getBuildTask } from "@/api/build";
-import { parseTime, statusFilter } from "@/utils";
+import { getAllBuildByMr, buildDebug, buildDexguard, getBuildTask, getMrById } from "@/api/build";
+import { mr2BuildData, parseTime, statusFilter } from "@/utils";
 
 import { mapGetters } from "vuex";
 
@@ -191,6 +191,20 @@ export default {
     }
   },
   methods: {
+    refreshMr(mr_id) {
+      this.param.mr_id = mr_id;
+      getMrById(this.param).then(mr => {
+        const newData = mr2BuildData(mr, this.buildData.hasbutton);
+
+        this.$store
+          .dispatch("mr/buildData", newData)
+          .then(() => {
+            console.log("get mr success")
+          })
+          .catch(() => {});
+      });
+
+    },
     refreshBuildTask(row) {
       this.taskParam.uuid=row.uuid
       console.log(this.taskParam)
@@ -210,6 +224,7 @@ export default {
       });
     },
     fetchData(mr_id) {
+      this.refreshMr(mr_id)
       this.fresh = false;
       this.listLoading = true;
       this.param.mr_id = mr_id;

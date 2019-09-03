@@ -9,6 +9,14 @@ export function getAllBuildByMr(params) {
   })
 }
 
+export function getMrById(params) {
+  return request({
+    url: '/build/latestcommitbymr',
+    method: 'get',
+    params
+  })
+}
+
 export function buildDebug(data) {
   return request({
     url: 'build/build?type=debug',
