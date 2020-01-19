@@ -130,8 +130,8 @@
             >Intl</el-link>
             <span v-if="scope.row.state === 1">-</span>
             <el-link
-              v-if="scope.row.state === 1"
-              :href=" 'http://apk.p1staff.com/tantan/' + getdir(scope.row.apk_path)"
+              v-if="scope.row.apk_path !== ''"
+              :href="getdir(scope.row)"
               target="_blank"
               type="primary"
             >Dir</el-link>
@@ -260,9 +260,11 @@ export default {
       }
       return false;
     },
-    getdir(path) {
-      var obj = path.lastIndexOf("/");
-      return path.substr(0, obj);
+    getdir(build) {
+      var obj = build.apk_path.lastIndexOf("/");
+      if (build.state === 1) return 'http://apk.p1staff.com/tantan/' + build.apk_path.substr(0, obj);
+      else if (build.build_type === 1) return 'http://apk.p1staff.com/tantan/dexguard-errors/' + build.apk_path.substr(0, obj);
+      else return 'http://apk.p1staff.com/tantan/debug-errors/' + build.apk_path.substr(0, obj);
     }
   }
 };
